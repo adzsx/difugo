@@ -4,23 +4,22 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/adzsx/dirsgover/pkg/check"
 	"github.com/adzsx/dirsgover/pkg/format"
+	"github.com/adzsx/dirsgover/pkg/httpcli"
 )
 
 var (
-	start string = ``
-
-	help string = `
+	help string = ` 
 Dirsgover - Dir Discoverer in go
 
-Syntax: dirsgover mode [options]
+Syntax: dirsgover host [options]
 
-option:
-	-h host:		Define the host to scan (required)	
-	--help:			Display help message		
+Options:
+	-h, --help:					Display help message
 
-	-w wordlis:		Define a wordlist with dirs to scan
-	-r 				Scan for dirs in robots.txt of host
+	-w wordlist:	Define a wordlist with dirs to scan
+	-r				Scan for dirs in robots.txt of host
 	`
 )
 
@@ -29,6 +28,18 @@ func main() {
 
 	scan := format.Args(args)
 
-	fmt.Println(scan)
-		
+	if scan.Host == "help" {
+		fmt.Println(help)
+		os.Exit(0)
+	}
+
+	if !check.ValidHost(scan.Host) {
+		fmt.Println("Host Address invalid")
+		os.Exit(0)
+	}
+
+	status := httpcli.Status(scan.Host)
+
+	fmt.Println(status)
+
 }

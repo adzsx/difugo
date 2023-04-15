@@ -1,41 +1,43 @@
 package format
 
+import (
+	"github.com/adzsx/dirsgover/pkg/check"
+)
+
 type Scan struct {
-	mode     string
-	host     string
-	wordlist string
+	Host     string
+	Wordlist string
 
-	robots bool
+	Robots bool
 
-	err string
+	Err string
 }
 
 func Args(args []string) Scan {
 	scan := Scan{}
 
-	scan.mode = args[1]
-
 	for index, element := range args {
 		switch element {
-		case "-h":
-			scan.host = args[index+1]
-
 		case "-w":
-			scan.wordlist = args[index+1]
+			scan.Wordlist = args[index+1]
 
 		case "-r":
-			scan.robots = true
+			scan.Robots = true
 		}
 	}
 
-	scan.err = ""
+	scan.Err = ""
 
-	if scan.mode == "" {
-		scan.err = "mode"
-	} else if scan.host == "" {
-		scan.err = "host"
-	} else if scan.wordlist == "" {
-		scan.err = "wordlist"
+	if scan.Host == "" {
+		scan.Err = "host"
+	} else if scan.Wordlist == "" {
+		scan.Err = "wordlist"
+	}
+
+	scan.Host = args[1]
+
+	if check.InSclice(args, "--help") || check.InSclice(args, "help") || check.InSclice(args, "-h") {
+		scan.Host = "help"
 	}
 
 	return scan
