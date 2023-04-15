@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/adzsx/dirsgover/pkg/check"
 	"github.com/adzsx/dirsgover/pkg/format"
 	"github.com/adzsx/dirsgover/pkg/httpcli"
 )
@@ -33,13 +32,16 @@ func main() {
 		os.Exit(0)
 	}
 
-	if !check.ValidHost(scan.Host) {
-		fmt.Println("Host Address invalid")
+	scan = format.Host(scan)
+
+	if scan.Err != "" {
+		fmt.Println("Invalid Host address")
 		os.Exit(0)
 	}
 
-	status := httpcli.Status(scan.Host)
-
-	fmt.Println(status)
-
+	if httpcli.HostUp(scan.Host) {
+		fmt.Println("Host is up")
+	} else {
+		fmt.Println("Host not reachable")
+	}
 }

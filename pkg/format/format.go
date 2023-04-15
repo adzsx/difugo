@@ -1,6 +1,8 @@
 package format
 
 import (
+	"strings"
+
 	"github.com/adzsx/dirsgover/pkg/check"
 )
 
@@ -28,17 +30,23 @@ func Args(args []string) Scan {
 
 	scan.Err = ""
 
-	if scan.Host == "" {
-		scan.Err = "host"
-	} else if scan.Wordlist == "" {
-		scan.Err = "wordlist"
-	}
-
 	scan.Host = args[1]
 
 	if check.InSclice(args, "--help") || check.InSclice(args, "help") || check.InSclice(args, "-h") {
 		scan.Host = "help"
 	}
 
+	if scan.Host == "" {
+		scan.Err = "host"
+	}
+	return scan
+}
+
+func Host(scan Scan) Scan {
+	if strings.Contains(scan.Host, "http") {
+		return scan
+	}
+
+	scan.Host = "http://" + scan.Host
 	return scan
 }
