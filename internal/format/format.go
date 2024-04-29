@@ -3,7 +3,7 @@ package format
 import (
 	"strings"
 
-	"github.com/adzsx/dirsgover/pkg/check"
+	"github.com/adzsx/dirsgover/internal/check"
 )
 
 type Scan struct {
