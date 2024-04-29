@@ -1,22 +1,19 @@
-package format
+package utils
 
 import (
+	"errors"
 	"strings"
-
-	"github.com/adzsx/dirsgover/internal/check"
 )
 
-type Scan struct {
+type Input struct {
 	Host     string
 	Wordlist string
-
-	Robots bool
-
-	Err string
+	Robots   bool
 }
 
-func Args(args []string) Scan {
-	scan := Scan{}
+func Args(args []string) (Input, error) {
+	scan := Input{}
+	var err error
 
 	for index, element := range args {
 		switch element {
@@ -28,21 +25,20 @@ func Args(args []string) Scan {
 		}
 	}
 
-	scan.Err = ""
-
 	scan.Host = args[1]
 
-	if check.InSclice(args, "--help") || check.InSclice(args, "help") || check.InSclice(args, "-h") {
+	if InSclice(args, "--help") || InSclice(args, "help") || InSclice(args, "-h") {
 		scan.Host = "help"
 	}
 
 	if scan.Host == "" {
-		scan.Err = "host"
+		err = errors.New("host")
 	}
-	return scan
+
+	return scan, err
 }
 
-func Host(scan Scan) Scan {
+func Host(scan Input) Input {
 	if strings.Contains(scan.Host, "http") {
 		return scan
 	}

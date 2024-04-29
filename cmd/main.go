@@ -4,9 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/adzsx/dirsgover/internal/check"
-	"github.com/adzsx/dirsgover/internal/format"
-	"github.com/adzsx/dirsgover/internal/httpcli"
+	"github.com/adzsx/dirsgover/internal/httpc"
+	"github.com/adzsx/dirsgover/internal/utils"
 )
 
 var (
@@ -27,27 +26,20 @@ func main() {
 
 	log.SetFlags(0)
 
-	if len(args) < 3 && !check.InSclice(args, "--help") && !check.InSclice(args, "-h") {
+	if len(args) < 3 && !utils.InSclice(args, "--help") && !utils.InSclice(args, "-h") {
 		log.Fatalln("Enter --help for help")
 	}
 
-	scan := format.Args(args)
+	scan, err := utils.Args(args)
+
+	utils.Err(err)
 
 	if scan.Host == "help" {
 		log.Println(help)
 		os.Exit(0)
 	}
 
-	scan = format.Host(scan)
+	scan = utils.Host(scan)
 
-	if scan.Err != "" {
-		log.Println("Invalid Host address")
-		os.Exit(0)
-	}
-
-	if httpcli.HostUp(scan.Host) {
-		log.Println("Host is up")
-	} else {
-		log.Fatalln("Host not reachable")
-	}
+	log.Println(httpc.Up(scan.Host))
 }
