@@ -22,6 +22,7 @@ func Args(args []string) (Input, error) {
 
 		case "-r":
 			scan.Robots = true
+
 		}
 	}
 

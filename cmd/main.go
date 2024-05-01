@@ -15,9 +15,11 @@ Dirsgover - Dir Discoverer in go
 Syntax: dirsgover host [options]
 
 Options:
-	-h, --help:	Display help message
-	-w wordlist:	Define a wordlist with dirs to scan
-	-r:		Scan for dirs in robots.txt of host
+	-h, --help:		Display help message
+	-w [wordlist]:		Define a wordlist with dirs to scan
+	-s [code1 code2]:	Don't show responses with names status codes
+	-S			Show all codes
+	-r:			Scan for dirs in robots.txt of host
 	`
 )
 
@@ -27,11 +29,11 @@ func main() {
 	log.SetFlags(0)
 
 	if len(args) < 3 && !utils.InSclice(args, "--help") && !utils.InSclice(args, "-h") {
-		log.Fatalln("Enter --help for help")
+		log.Println("Enter --help for help")
+		os.Exit(0)
 	}
 
 	scan, err := utils.Args(args)
-
 	utils.Err(err)
 
 	if scan.Host == "help" {
@@ -39,7 +41,9 @@ func main() {
 		os.Exit(0)
 	}
 
-	scan = utils.Host(scan)
+	scan.Host = utils.ValidAddr(scan.Host)
 
-	log.Println(httpc.Up(scan.Host))
+	err = httpc.Scan(scan)
+	utils.Err(err)
+
 }

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"net"
 	"strings"
 )
 
@@ -21,4 +22,20 @@ func InSclice(s []string, element string) bool {
 
 func ValidHost(host string) bool {
 	return strings.Contains(host, ".")
+}
+
+func ValidIP(ip string) bool {
+	return net.ParseIP(ip) != nil
+}
+
+func ValidAddr(url string) string {
+	if !ValidIP(url) {
+		if !strings.Contains(url, "https://") && !strings.Contains(url, "http://") {
+			return "https://" + url
+		}
+	} else {
+		return "http://" + url
+	}
+
+	return url
 }
