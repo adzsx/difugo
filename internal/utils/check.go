@@ -1,7 +1,9 @@
 package utils
 
 import (
+	"bufio"
 	"net"
+	"os"
 	"strings"
 )
 
@@ -38,4 +40,20 @@ func ValidAddr(url string) string {
 	}
 
 	return url
+}
+
+func LineCount(path string) int {
+
+	file, err := os.Open(path)
+	Err(err)
+	defer file.Close()
+
+	infoSc := bufio.NewScanner(file)
+
+	var count int
+	for infoSc.Scan() {
+		count++
+	}
+
+	return count
 }

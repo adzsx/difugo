@@ -46,14 +46,10 @@ func Scan(input utils.Input) error {
 		utils.Err(err)
 		defer file.Close()
 
+		var count int = utils.LineCount(scan.Wordlist)
+		var done float64
+
 		scanner := bufio.NewScanner(file)
-
-		var count int
-		for scanner.Scan() {
-			count++
-		}
-
-		var done int
 
 		buf := make([]byte, bufSize)
 		scanner.Buffer(buf, int(bufSize))
@@ -63,13 +59,16 @@ func Scan(input utils.Input) error {
 
 			done++
 
+			fmt.Print("\033[2K\033[999D")
 			if resp.StatusCode != 404 {
 
-				fmt.Printf("[%v] %v/%v\n", resp.StatusCode, scan.Host, scanner.Text())
+				fmt.Printf("[%v] /%v\n", resp.StatusCode, scanner.Text())
 			}
 
-			fmt.Printf("Progess: %v (%v/%v)", math.Round(float64(done/count)), done, count)
+			fmt.Printf("Progess: %v%v (%v/%v)", math.Round(done/float64(count)*1000)/10, "%", done, count)
 		}
+
+		fmt.Println(scanner.Err())
 	}
 
 	return nil
