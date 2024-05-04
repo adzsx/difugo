@@ -1,5 +1,10 @@
 package utils
 
+import (
+	"log"
+	"runtime"
+)
+
 func FilterChar(str string, char string, before bool) string {
 	var final string
 
@@ -20,4 +25,10 @@ func FilterChar(str string, char string, before bool) string {
 	}
 
 	return final
+}
+
+func ANSI(inp any) {
+	if runtime.GOOS != "windows" {
+		log.Print(inp)
+	}
 }

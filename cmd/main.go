@@ -17,8 +17,8 @@ Syntax: dirsgover host [options]
 Options:
 	-h, --help:		Display help message
 	-w [wordlist]:		Define a wordlist with dirs to scan
-	-s [code1 code2]:	Don't show responses with names status codes
-	-S			Show all codes
+	-f [code1 code2]:	Filter out specific status codes
+	-S [code1 code2]:	Show specific status codes (empty for all)
 	-r:			Scan for dirs in robots.txt of host
 	`
 )
