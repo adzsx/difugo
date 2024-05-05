@@ -3,6 +3,7 @@ package httpc
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"math"
 	"net/http"
 	"os"
@@ -21,6 +22,7 @@ var (
 	jobs    chan string
 	status  int
 	workers int
+	client  http.Client = http.Client{Timeout: 3 * time.Second}
 )
 
 func Scan(input utils.Input) error {
@@ -42,9 +44,6 @@ func Scan(input utils.Input) error {
 		}
 
 		close(jobs)
-		wg.Wait()
-
-		wg.Wait()
 
 	} else {
 		file, err := os.Open(scan.Wordlist)
@@ -72,48 +71,42 @@ func Scan(input utils.Input) error {
 			jobs <- scanner.Text()
 		}
 
-		close(jobs)
-		wg.Wait()
-
-		fmt.Println(scanner.Err())
 	}
+
+	wg.Wait()
 
 	return nil
 }
 
 func worker(jobs <-chan string) {
 	for n := range jobs {
-		GetPath(n)
-		if status == 429 && workers > 1 {
-			return
+		if n[0:1] != "~" {
+			GetPath(n)
+			wg.Done()
 		}
 	}
 }
 
 func GetPath(path string) {
-	resp, err := http.Get(scan.Host + "/" + path)
+	resp, err := client.Get(scan.Host + "/" + path)
 	if err != nil {
 		return
 	}
 	done++
 
 	if resp.StatusCode == 429 {
-		time.Sleep(time.Second)
+		log.Println("Err 429")
 	}
 
 	if len(scan.StatShow) > 0 {
 		if utils.InIntSl(scan.StatShow, resp.StatusCode) {
-			fmt.Print("\033[2K\033[999D")
-			fmt.Printf("[%v] /%v\n", resp.StatusCode, path)
-			fmt.Printf("Progess: %v%v (%v/%v)", math.Round(done/count*1000)/10, "%", done, count)
+			fmt.Printf("\033[2K\033[999D[%v] /%v\nProgess: %v%v (%v/%v)", resp.StatusCode, path, math.Round(done/count*1000)/10, "%", done, count)
 		}
 	} else if !utils.InIntSl(scan.StatHide, resp.StatusCode) {
-		fmt.Print("\033[2K\033[999D")
-		fmt.Printf("[%v] /%v\n", resp.StatusCode, path)
-		fmt.Printf("Progess: %v%v (%v/%v)", math.Round(done/count*1000)/10, "%", done, count)
+		fmt.Printf("\033[2K\033[999D[%v] /%v\nProgess: %v%v (%v/%v)", resp.StatusCode, path, math.Round(done/count*1000)/10, "%", done, count)
 	}
 
-	if int(done)%20 == 0 {
+	if int(done)%10 != -1 {
 		fmt.Print("\033[2K\033[999D")
 		fmt.Printf("Progess: %v%v (%v/%v)", math.Round(done/count*1000)/10, "%", done, count)
 	}
