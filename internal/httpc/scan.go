@@ -12,15 +12,12 @@ import (
 )
 
 var (
-	scan    utils.Input
-	bleep   []string
-	count   float64
-	done    float64
-	wg      sync.WaitGroup
-	jobs    chan string
-	results chan map[string]int
-	status  int
-	workers int
+	scan  utils.Input
+	bleep []string
+	count float64
+	done  float64
+	wg    sync.WaitGroup
+	jobs  chan string
 )
 
 func Scan(input utils.Input) error {
@@ -64,11 +61,8 @@ func Scan(input utils.Input) error {
 
 	}
 
-	results = make(chan map[string]int, len(jobs))
-
 	for i := 0; i < scan.Workers; i++ {
 		go worker(jobs)
-		workers++
 	}
 
 	wg.Wait()
