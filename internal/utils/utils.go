@@ -38,5 +38,7 @@ func ANSI(inp any) {
 }
 
 func Verbose(level int, v ...any) {
-
+	if level <= vlevel {
+		log.Print(v...)
+	}
 }

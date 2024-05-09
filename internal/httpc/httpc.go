@@ -1,7 +1,6 @@
 package httpc
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -27,14 +26,10 @@ func Status(host string) int {
 
 func Up(host string) bool {
 	client.Timeout = time.Second * 3
-	fmt.Println("Checking status of host...")
+	utils.Verbose(1, "Checking status of host...")
 	_, err := client.Get(host)
 
-	if err != nil {
-		return false
-	}
-
-	return true
+	return err != nil
 }
 
 func Robots(host string) {

@@ -3,7 +3,6 @@ package httpc
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"math"
 	"net/http"
 	"os"
@@ -28,7 +27,7 @@ func Scan(input utils.Input) error {
 	scan = input
 
 	if scan.Robots {
-		log.Println("Talking to robots...")
+		utils.Verbose(1, "Talking to robots...")
 		Robots(scan.Host)
 
 		count = float64(len(bleep))
@@ -40,7 +39,7 @@ func Scan(input utils.Input) error {
 		}
 
 	} else {
-		log.Println("Started scan")
+		utils.Verbose(1, "Started scan")
 		file, err := os.Open(scan.Wordlist)
 		utils.Err(err)
 		stat, err := file.Stat()
@@ -56,7 +55,7 @@ func Scan(input utils.Input) error {
 		count = float64(utils.LineCount(scan.Wordlist))
 		jobs = make(chan string, int(count))
 
-		log.Println("Wordlist loaded")
+		utils.Verbose(1, "Wordlist loaded")
 
 		for scanner.Scan() {
 			jobs <- scanner.Text()
@@ -87,12 +86,12 @@ func worker(jobs <-chan string) {
 func GetPath(path string) {
 	resp, err := http.Get(scan.Host + "/" + path)
 	if err != nil {
-		return
+		utils.Verbose(2, err)
 	}
 	done++
 
 	if resp.StatusCode == 429 {
-		log.Println("Err 429")
+		utils.Verbose(2, "Error 429")
 	}
 
 	if len(scan.StatShow) > 0 {

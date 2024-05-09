@@ -21,6 +21,7 @@ func Args(args []string) (Input, error) {
 	scan := Input{}
 
 	var err error
+	vlevel = 0
 
 	for index, element := range args {
 		switch element {
@@ -50,10 +51,10 @@ func Args(args []string) (Input, error) {
 			scan.Workers, _ = strconv.Atoi(args[index+1])
 
 		case "-v", "--verbose":
-			vlevel = 2
+			vlevel = 1
 
 		case "--debug":
-			vlevel = 3
+			vlevel = 2
 		}
 	}
 
