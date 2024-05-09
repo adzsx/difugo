@@ -21,7 +21,7 @@ Options:
 	-f, --filter 	[code1 code2]:		Filter out specific status codes
 	-s, --show 	[code1 code2]:		Show specific status codes (empty for all)
 	-r, --robots:				Scan for dirs in robots.txt of host
-	-a, --async 	[n]:			Use [n] asynchronous threads (default: 16) 
+	-a, --async 	[threads]:		Use [n] asynchronous threads (default: 32) 
 	-v, --verbose:				Verbose mode (print more info)
 	--debug:				Enable debug mode (print even more info)
 	`

@@ -17,6 +17,10 @@ type Input struct {
 	Workers int
 }
 
+var (
+	threadLimit int = 2048
+)
+
 func Args(args []string) (Input, error) {
 	scan := Input{}
 
@@ -69,7 +73,12 @@ func Args(args []string) (Input, error) {
 	}
 
 	if scan.Workers == 0 {
-		scan.Workers = 16
+		scan.Workers = 32
+	}
+
+	if scan.Workers > threadLimit {
+		scan.Workers = threadLimit
+		Verbose(1, "Cant open more than ", threadLimit, " threads")
 	}
 
 	if !InSclice(args, "-S") {

@@ -3,6 +3,7 @@ package httpc
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"math"
 	"net/http"
 	"os"
@@ -80,13 +81,10 @@ func worker(jobs <-chan string) {
 func GetPath(path string) {
 	resp, err := http.Get(scan.Host + "/" + path)
 	if err != nil {
-		utils.Verbose(2, err)
+		log.Println(err)
+		return
 	}
 	done++
-
-	if resp.StatusCode == 429 {
-		utils.Verbose(2, "Error 429")
-	}
 
 	if len(scan.StatShow) > 0 {
 		if utils.InIntSl(scan.StatShow, resp.StatusCode) {
@@ -96,7 +94,7 @@ func GetPath(path string) {
 		fmt.Printf("\033[2K\033[999D[%v] /%v\nProgess: %v%v (%v/%v)", resp.StatusCode, path, math.Round(done/count*1000)/10, "%", done, count)
 	}
 
-	if int(done)%10 != 0 {
+	if int(done)%10 == 0 {
 		fmt.Print("\033[2K\033[999D")
 		fmt.Printf("Progess: %v%v (%v/%v)", math.Round(done/count*1000)/10, "%", done, count)
 	}
