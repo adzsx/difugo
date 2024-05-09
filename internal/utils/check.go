@@ -40,7 +40,7 @@ func ValidIP(ip string) bool {
 }
 
 func ValidAddr(url string) string {
-	if !ValidIP(url) {
+	if !ValidIP(FilterChar(url, ":", true)) {
 		if !strings.Contains(url, "https://") && !strings.Contains(url, "http://") {
 			return "https://" + url
 		}

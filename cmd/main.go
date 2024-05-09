@@ -15,11 +15,14 @@ Dirsgover - Dir Discoverer in go
 Syntax: dirsgover host [options]
 
 Options:
-	-h, --help:		Display help message
-	-w [wordlist]:		Define a wordlist with dirs to scan
-	-f [code1 code2]:	Filter out specific status codes
-	-S [code1 code2]:	Show specific status codes (empty for all)
-	-r:			Scan for dirs in robots.txt of host
+	-h, --help:				Display help message
+	-w, --wordlist 	[wordlist]:		Define a wordlist with dirs to scan
+	-f, --filter 	[code1 code2]:		Filter out specific status codes
+	-s, --show 	[code1 code2]:		Show specific status codes (empty for all)
+	-r, --robots:				Scan for dirs in robots.txt of host
+	-a, --async 	[n]:			Use [n] asynchronous threads (default: 16) 
+	-v, --verbose:				Verbose mode (print more info)
+	--debug:				Enable debug mode (print even more info)
 	`
 )
 
@@ -42,6 +45,12 @@ func main() {
 	}
 
 	scan.Host = utils.ValidAddr(scan.Host)
+
+	up := httpc.Up(scan.Host)
+
+	if !up {
+		log.Fatalln("Host is not up")
+	}
 
 	err = httpc.Scan(scan)
 	utils.Err(err)

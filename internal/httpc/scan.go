@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"sync"
-	"time"
 
 	"github.com/adzsx/dirsgover/internal/utils"
 )
@@ -20,32 +19,28 @@ var (
 	done    float64
 	wg      sync.WaitGroup
 	jobs    chan string
+	results chan map[string]int
 	status  int
 	workers int
-	client  http.Client = http.Client{Timeout: 3 * time.Second}
 )
 
 func Scan(input utils.Input) error {
 	scan = input
 
 	if scan.Robots {
+		log.Println("Talking to robots...")
 		Robots(scan.Host)
 
 		count = float64(len(bleep))
 		jobs = make(chan string, int(count))
 
-		for i := 0; i < scan.Workers; i++ {
-			go worker(jobs)
-			workers++
-		}
-
 		for _, entry := range bleep {
 			jobs <- entry
+			wg.Add(1)
 		}
 
-		close(jobs)
-
 	} else {
+		log.Println("Started scan")
 		file, err := os.Open(scan.Wordlist)
 		utils.Err(err)
 		stat, err := file.Stat()
@@ -61,16 +56,20 @@ func Scan(input utils.Input) error {
 		count = float64(utils.LineCount(scan.Wordlist))
 		jobs = make(chan string, int(count))
 
-		for i := 0; i < scan.Workers; i++ {
-			go worker(jobs)
-			workers++
-		}
+		log.Println("Wordlist loaded")
 
 		for scanner.Scan() {
-			wg.Add(1)
 			jobs <- scanner.Text()
+			wg.Add(1)
 		}
 
+	}
+
+	results = make(chan map[string]int, len(jobs))
+
+	for i := 0; i < scan.Workers; i++ {
+		go worker(jobs)
+		workers++
 	}
 
 	wg.Wait()
@@ -80,15 +79,13 @@ func Scan(input utils.Input) error {
 
 func worker(jobs <-chan string) {
 	for n := range jobs {
-		if n[0:1] != "~" {
-			GetPath(n)
-			wg.Done()
-		}
+		GetPath(n)
+		wg.Done()
 	}
 }
 
 func GetPath(path string) {
-	resp, err := client.Get(scan.Host + "/" + path)
+	resp, err := http.Get(scan.Host + "/" + path)
 	if err != nil {
 		return
 	}
@@ -106,7 +103,7 @@ func GetPath(path string) {
 		fmt.Printf("\033[2K\033[999D[%v] /%v\nProgess: %v%v (%v/%v)", resp.StatusCode, path, math.Round(done/count*1000)/10, "%", done, count)
 	}
 
-	if int(done)%10 != -1 {
+	if int(done)%10 != 0 {
 		fmt.Print("\033[2K\033[999D")
 		fmt.Printf("Progess: %v%v (%v/%v)", math.Round(done/count*1000)/10, "%", done, count)
 	}

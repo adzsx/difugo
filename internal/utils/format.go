@@ -24,13 +24,13 @@ func Args(args []string) (Input, error) {
 
 	for index, element := range args {
 		switch element {
-		case "-w":
+		case "-w", "--wordlist":
 			scan.Wordlist = args[index+1]
 
-		case "-r":
+		case "-r", "--robots":
 			scan.Robots = true
 
-		case "-S":
+		case "-s", "--show":
 			for i := 1; len(args) > index+i && !strings.Contains(args[index+i], "-"); i++ {
 				code, _ := strconv.Atoi(args[index+i])
 				scan.StatShow = append(scan.StatShow, code)
@@ -40,15 +40,20 @@ func Args(args []string) (Input, error) {
 				scan.StatShow = []int{}
 			}
 
-		case "-f":
+		case "-f", "--filter":
 			for i := 1; len(args) > index+i && !strings.Contains(args[index+i], "-"); i++ {
 				code, _ := strconv.Atoi(args[index+i])
 				scan.StatHide = append(scan.StatHide, code)
 
 			}
-		case "-a":
+		case "-a", "--async":
 			scan.Workers, _ = strconv.Atoi(args[index+1])
 
+		case "-v", "--verbose":
+			vlevel = 2
+
+		case "--debug":
+			vlevel = 3
 		}
 	}
 

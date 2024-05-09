@@ -6,12 +6,17 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/adzsx/dirsgover/internal/utils"
 )
 
+var (
+	client http.Client
+)
+
 func Status(host string) int {
-	resp, err := http.Get(host)
+	resp, err := client.Get(host)
 
 	if err != nil {
 		return 404
@@ -20,12 +25,16 @@ func Status(host string) int {
 	return resp.StatusCode
 }
 
-func Up(host string) int {
+func Up(host string) bool {
+	client.Timeout = time.Second * 3
 	fmt.Println("Checking status of host...")
+	_, err := client.Get(host)
 
-	status := Status(host)
+	if err != nil {
+		return false
+	}
 
-	return status
+	return true
 }
 
 func Robots(host string) {
