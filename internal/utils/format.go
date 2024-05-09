@@ -25,6 +25,8 @@ func Args(args []string) (Input, error) {
 
 	for index, element := range args {
 		switch element {
+		case "-u", "--url":
+			scan.Host = args[index+1]
 		case "-w", "--wordlist":
 			scan.Wordlist = args[index+1]
 
@@ -57,8 +59,6 @@ func Args(args []string) (Input, error) {
 			vlevel = 2
 		}
 	}
-
-	scan.Host = args[1]
 
 	if InSclice(args, "--help") || InSclice(args, "help") || InSclice(args, "-h") {
 		scan.Host = "help"

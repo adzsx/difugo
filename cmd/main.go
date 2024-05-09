@@ -12,10 +12,11 @@ var (
 	help string = ` 
 Dirsgover - Dir Discoverer in go
 
-Syntax: dirsgover host [options]
+Syntax: dirsgover [options]
 
 Options:
 	-h, --help:				Display help message
+	-u, --url	[URL]:			Set hosts URL
 	-w, --wordlist 	[wordlist]:		Define a wordlist with dirs to scan
 	-f, --filter 	[code1 code2]:		Filter out specific status codes
 	-s, --show 	[code1 code2]:		Show specific status codes (empty for all)

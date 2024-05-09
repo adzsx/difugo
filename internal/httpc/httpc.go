@@ -29,7 +29,12 @@ func Up(host string) bool {
 	utils.Verbose(1, "Checking status of host...")
 	_, err := client.Get(host)
 
-	return err != nil
+	if err != nil {
+		utils.Verbose(1, err)
+		return false
+	}
+	utils.Verbose(1, "Host it up")
+	return true
 }
 
 func Robots(host string) {
