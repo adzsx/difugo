@@ -4,24 +4,32 @@ import (
 	"log"
 	"os"
 
-	"github.com/adzsx/axolyn/internal/httpc"
-	"github.com/adzsx/axolyn/internal/utils"
+	"github.com/adzsx/difugo/internal/httpc"
+	"github.com/adzsx/difugo/internal/utils"
 )
 
 var (
 	help string = ` 
-Dirsgover - Dir Discoverer in go
+Axolyn - Easy Directory fuzzing
 
-Syntax: dirsgover [options]
+Usage:
+	axolyn [options]
 
 Options:
 	-h, --help:				Display help message
+	
 	-u, --url	[URL]:			Set hosts URL
 	-w, --wordlist 	[wordlist]:		Define a wordlist with dirs to scan
-	-f, --filter 	[code1 code2]:		Filter out specific status codes
-	-s, --show 	[code1 code2]:		Show specific status codes (empty for all)
 	-r, --robots:				Scan for dirs in robots.txt of host
-	-a, --async 	[threads]:		Use [n] asynchronous threads (default: 32) 
+
+	-p, --prefix [prefix]:			Set the prefix for the url (example.com[prefix]something)		default: /
+	-s, --sufix [suffix]:			Set the suffix (example.com[?]something[=0])				default: ""
+	
+	
+	-f, --filter 	[code1 code2]:		Filter out specific status codes					default: 403, 404
+	-c, --code 	[code1 code2]:		Show specific status codes (if empty, everything is shown)
+
+	-a, --async 	[threads]:		Use [n] asynchronous threads (default: 32) 				default: 32
 	-v, --verbose:				Verbose mode (print more info)
 	--debug:				Enable debug mode (print even more info)
 	`

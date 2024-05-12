@@ -2,6 +2,7 @@ package utils
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -10,6 +11,9 @@ type Input struct {
 	Host     string
 	Wordlist string
 	Robots   bool
+
+	Prefix string
+	Suffix string
 	// Return codes
 	StatShow []int
 	StatHide []int
@@ -37,7 +41,13 @@ func Args(args []string) (Input, error) {
 		case "-r", "--robots":
 			scan.Robots = true
 
-		case "-s", "--show":
+		case "-p", "--prefix":
+			scan.Prefix = args[index+1]
+
+		case "-s", "--suffix":
+			scan.Suffix = args[index+1]
+
+		case "-c", "--code":
 			for i := 1; len(args) > index+i && !strings.Contains(args[index+i], "-"); i++ {
 				code, _ := strconv.Atoi(args[index+i])
 				scan.StatShow = append(scan.StatShow, code)
@@ -84,6 +94,20 @@ func Args(args []string) (Input, error) {
 	if !InSclice(args, "-S") {
 		scan.StatHide = append(scan.StatHide, 403, 404)
 	}
+
+	if scan.Prefix == "" {
+		scan.Prefix = "/"
+	}
+	Verbose(1, "Scan started")
+
+	var input string
+	if scan.Robots {
+		input = "robots.txt"
+	} else {
+		input = "wordlist"
+	}
+
+	Verbose(2, fmt.Sprintf("%v[%v]%v[%v]", scan.Host, scan.Prefix, input, scan.Suffix))
 
 	return scan, err
 }

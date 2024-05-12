@@ -9,7 +9,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/adzsx/axolyn/internal/utils"
+	"github.com/adzsx/difugo/internal/utils"
 )
 
 var (
@@ -56,7 +56,7 @@ func Scan(input utils.Input) error {
 		utils.Verbose(1, "Wordlist loaded")
 
 		for scanner.Scan() {
-			jobs <- scanner.Text()
+			jobs <- scan.Prefix + scanner.Text() + scan.Suffix
 			wg.Add(1)
 		}
 
@@ -79,7 +79,7 @@ func worker(jobs <-chan string) {
 }
 
 func GetPath(path string) {
-	resp, err := http.Get(scan.Host + "/" + path)
+	resp, err := http.Get(scan.Host + path)
 	if err != nil {
 		log.Println(err)
 		return
@@ -88,10 +88,10 @@ func GetPath(path string) {
 
 	if len(scan.StatShow) > 0 {
 		if utils.InIntSl(scan.StatShow, resp.StatusCode) {
-			fmt.Printf("\033[2K\033[999D[%v] /%v\nProgess: %v%v (%v/%v)", resp.StatusCode, path, math.Round(done/count*1000)/10, "%", done, count)
+			fmt.Printf("\033[2K\033[999D[%v] %v\nProgess: %v%v (%v/%v)", resp.StatusCode, path, math.Round(done/count*1000)/10, "%", done, count)
 		}
 	} else if !utils.InIntSl(scan.StatHide, resp.StatusCode) {
-		fmt.Printf("\033[2K\033[999D[%v] /%v\nProgess: %v%v (%v/%v)", resp.StatusCode, path, math.Round(done/count*1000)/10, "%", done, count)
+		fmt.Printf("\033[2K\033[999D[%v] %v\nProgess: %v%v (%v/%v)", resp.StatusCode, path, math.Round(done/count*1000)/10, "%", done, count)
 	}
 
 	if int(done)%10 == 0 {
