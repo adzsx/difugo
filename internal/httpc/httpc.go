@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/adzsx/dirsgover/internal/utils"
+	"github.com/adzsx/axolyn/internal/utils"
 )
 
 var (

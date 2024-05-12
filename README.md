@@ -1,2 +1,2 @@
-# difugo
-Directory Fuzzer in Go is a feature rich directory fuzzer focused on simplicity and speed. 
+# axolyn
+Axolyn is a Directory Fuzzer focused on simplicity and speed. 

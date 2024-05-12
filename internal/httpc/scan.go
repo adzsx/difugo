@@ -9,7 +9,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/adzsx/dirsgover/internal/utils"
+	"github.com/adzsx/axolyn/internal/utils"
 )
 
 var (

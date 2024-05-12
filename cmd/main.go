@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/adzsx/dirsgover/internal/httpc"
-	"github.com/adzsx/dirsgover/internal/utils"
+	"github.com/adzsx/axolyn/internal/httpc"
+	"github.com/adzsx/axolyn/internal/utils"
 )
 
 var (
