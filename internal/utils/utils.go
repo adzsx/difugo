@@ -2,7 +2,6 @@ package utils
 
 import (
 	"log"
-	"runtime"
 )
 
 var (
@@ -29,12 +28,6 @@ func FilterChar(str string, char string, before bool) string {
 	}
 
 	return final
-}
-
-func ANSI(inp any) {
-	if runtime.GOOS != "windows" {
-		log.Print(inp)
-	}
 }
 
 func Verbose(level int, v ...any) {

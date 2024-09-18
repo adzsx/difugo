@@ -12,13 +12,16 @@ type Input struct {
 	Wordlist string
 	Robots   bool
 
-	Prefix string
 	Suffix string
+
 	// Return codes
+	// Return codes to print
 	StatShow []int
+	// Return codes to hide
 	StatHide []int
 
 	Workers int
+	Level   int
 }
 
 var (
@@ -40,9 +43,6 @@ func Args(args []string) (Input, error) {
 
 		case "-r", "--robots":
 			scan.Robots = true
-
-		case "-p", "--prefix":
-			scan.Prefix = args[index+1]
 
 		case "-s", "--suffix":
 			scan.Suffix = args[index+1]
@@ -95,19 +95,24 @@ func Args(args []string) (Input, error) {
 		scan.StatHide = append(scan.StatHide, 403, 404)
 	}
 
-	if scan.Prefix == "" {
-		scan.Prefix = "/"
-	}
 	Verbose(1, "Scan started")
 
-	var input string
+	var wordlist string = scan.Wordlist
 	if scan.Robots {
-		input = "robots.txt"
-	} else {
-		input = "wordlist"
+		wordlist = "/robots.txt"
 	}
 
-	Verbose(2, fmt.Sprintf("%v[%v]%v[%v]", scan.Host, scan.Prefix, input, scan.Suffix))
+	fmt.Printf(`
+Starting difugo
+#########################################################
+Host:			%v
+Wordlist:		%v
+Show-Codes:		%v
+Ignore-Codes:		%v
+Suffix:			%v
+Threads:		%v
+#########################################################
+`, scan.Host, wordlist, scan.StatShow, scan.StatHide, scan.Suffix, scan.Workers)
 
 	return scan, err
 }

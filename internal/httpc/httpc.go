@@ -25,12 +25,12 @@ func Status(host string) int {
 }
 
 func Up(host string) bool {
+	utils.Verbose(1, "Checking status of host: \""+host+"\"")
 	client.Timeout = time.Second * 3
-	utils.Verbose(1, "Checking status of host...")
 	_, err := client.Get(host)
 
 	if err != nil {
-		utils.Verbose(1, err)
+		utils.Verbose(1, "Error:\n	"+err.Error())
 		return false
 	}
 	utils.Verbose(1, "Host it up")

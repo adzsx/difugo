@@ -10,28 +10,27 @@ import (
 
 var (
 	help string = ` 
-Axolyn - Easy Directory fuzzing
+difugo - A Directory fuzzer
 
 Usage:
-	axolyn [options]
+	difugo [options]
 
 Options:
-	-h, --help:				Display help message
+	-h, --help:			Display help message
 	
-	-u, --url	[URL]:			Set hosts URL
-	-w, --wordlist 	[wordlist]:		Define a wordlist with dirs to scan
-	-r, --robots:				Scan for dirs in robots.txt of host
+	-u, --url	[string]:	Set hosts URL
+	-w, --wordlist 	[file]:		Define a wordlist with dirs to scan
+	-r, --robots:			Scan for dirs in robots.txt of host
 
-	-p, --prefix [prefix]:			Set the prefix for the url (example.com[prefix]something)		default: /
-	-s, --sufix [suffix]:			Set the suffix (example.com[?]something[=0])				default: ""
+	-s, --sufix 	[string]:	Set the suffix (example.com/[fuzzed value][suffix])			default: ""
 	
-	
-	-f, --filter 	[code1 code2]:		Filter out specific status codes					default: 403, 404
-	-c, --code 	[code1 code2]:		Show specific status codes (if empty, everything is shown)
+	-f, --filter 	[[]int]:	Filter out specific status codes					default: 403, 404
+	-c, --code 	[[]int]:	Show specific status codes (if empty, everything is shown)
 
-	-a, --async 	[threads]:		Use [n] asynchronous threads (default: 32) 				default: 32
-	-v, --verbose:				Verbose mode (print more info)
-	--debug:				Enable debug mode (print even more info)
+	-a, --async 	[int]:		Number of asynchronous threads						default: 32
+	-l, --level	[int]:		Find directories recursive						default: 1
+	-v, --verbose:			Verbose mode
+	--debug:			Enable debug mode
 	`
 )
 
