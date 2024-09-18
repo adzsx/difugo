@@ -20,11 +20,18 @@ var (
 	wg    sync.WaitGroup
 	jobs  []chan string
 
-	statusLevel int
+	// Set up scanner to not follow redirects
+	scanner http.Client = http.Client{CheckRedirect: func(req *http.Request, via []*http.Request) error { return http.ErrUseLastResponse }}
 )
 
 func Scan(input utils.Input) error {
 	scan = input
+
+	scanner = http.Client{
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
 
 	if scan.Robots {
 		utils.Verbose(1, "Talking to robots...")
@@ -81,21 +88,41 @@ func worker(jobs []chan string) {
 }
 
 func GetPath(path string) {
-	resp, err := http.Get(scan.Host + path)
+	resp, err := scanner.Get(scan.Host + path)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	done++
 
+	var redirect string
+	if resp.StatusCode > 299 && resp.StatusCode < 399 {
+		// Redirect
+
+		url, err := resp.Location()
+		utils.Err(err)
+		redirect = url.Path
+	}
+
 	if len(scan.StatShow) > 0 {
 		if utils.InIntSl(scan.StatShow, resp.StatusCode) {
-			fmt.Printf("\033[2K\033[999D[%v] %v\nProgess: %v%v (%v/%v)", resp.StatusCode, path, math.Round(done/count*1000)/10, "%", done, count)
+			fmt.Print("\033[2K\033[999D")
+			fmt.Printf("[%v] /%v", resp.StatusCode, path)
+			if redirect != "" {
+				fmt.Printf("	-> (%v)", redirect)
+			}
+			fmt.Printf("\nProgess: %v%v (%v/%v)", math.Round(done/count*1000)/10, "%", done, count)
 		}
 
+		// Check if return code is in Ignore codes
 	} else if !utils.InIntSl(scan.StatHide, resp.StatusCode) {
 		fmt.Print("\033[2K\033[999D")
-		fmt.Printf("[%v] %v\nProgess: %v%v (%v/%v)", resp.StatusCode, path, math.Round(done/count*1000)/10, "%", done, count)
+
+		fmt.Printf("[%v] /%v", resp.StatusCode, path)
+		if redirect != "" {
+			fmt.Printf("	-> (%v)", redirect)
+		}
+		fmt.Printf("\nProgess: %v%v (%v/%v)", math.Round(done/count*1000)/10, "%", done, count)
 	}
 
 	if int(done)%10 == 0 {

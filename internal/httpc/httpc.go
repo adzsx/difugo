@@ -62,5 +62,7 @@ func Robots(host string) {
 		utils.Err(err)
 	} else if status == 404 {
 		log.Fatalln("robots.txt does not exist on this host")
+	} else {
+		log.Fatalf("robots.txt returns code %v", status)
 	}
 }
